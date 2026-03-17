@@ -36,6 +36,10 @@ RUN npm install --only=production --legacy-peer-deps
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /usr/src/app/prisma ./prisma
+COPY --from=builder /usr/src/app/package*.json ./
+COPY --from=builder /usr/src/app/nest-cli.json ./
+COPY --from=builder /usr/src/app/tsconfig*.json ./
+COPY --from=builder /usr/src/app/prisma.config.ts ./
 
 # Use Render's PORT environment variable or default to 3000
 ENV PORT=3000
