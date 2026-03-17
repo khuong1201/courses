@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  STUDENT
+  INSTRUCTOR
+  ADMIN
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password_hash String
+  role          Role     @default(STUDENT)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  profile     UserProfile?
+  courses     Course[] // Courses taught by instructor
+  enrollments Enrollment[] // Courses student is enrolled in
+}
+
+model UserProfile {
+  id         String   @id @default(uuid())
+  user_id    String   @unique
+  full_name  String
+  avatar_url String?
+  bio        String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Course {
+  id             String       @id @default(uuid())
+  instructor_id  String
+  title          String
+  description    String?
+  category       String?
+  cover_image    String?
+  status         CourseStatus @default(DRAFT)
+  price          Float?       @default(0)
+  average_rating Float?       @default(0)
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+
+  instructor  User           @relation(fields: [instructor_id], references: [id], onDelete: Cascade)
+  modules     CourseModule[]
+  enrollments Enrollment[]
+}
+
+model CourseModule {
+  id         String   @id @default(uuid())
+  course_id  String
+  title      String
+  order      Int      @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  course  Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  lessons Lesson[]
+}
+
+enum LessonType {
+  VIDEO
+  TEXT
+  QUIZ
+}
+
+model Lesson {
+  id           String     @id @default(uuid())
+  module_id    String
+  title        String
+  content_type LessonType @default(VIDEO)
+  video_url    String?
+  text_content String?
+  duration     Int? // in seconds
+  order        Int        @default(0)
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+
+  module   CourseModule     @relation(fields: [module_id], references: [id], onDelete: Cascade)
+  progress LessonProgress[]
+}
+
+model Enrollment {
+  id                  String   @id @default(uuid())
+  student_id          String
+  course_id           String
+  progress_percentage Float    @default(0)
+  enrolled_at         DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  student  User             @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  course   Course           @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  progress LessonProgress[]
+
+  @@unique([student_id, course_id])
+}
+
+model LessonProgress {
+  id            String    @id @default(uuid())
+  enrollment_id String
+  lesson_id     String
+  is_completed  Boolean   @default(false)
+  completed_at  DateTime?
+  watch_time    Int       @default(0) // in seconds
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  enrollment Enrollment @relation(fields: [enrollment_id], references: [id], onDelete: Cascade)
+  lesson     Lesson     @relation(fields: [lesson_id], references: [id], onDelete: Cascade)
+
+  @@unique([enrollment_id, lesson_id])
+}
