@@ -16,7 +16,16 @@ async function bootstrap() {
   );
 
   // ─── CORS ─────────────────────────────────────────────────────────────────
-  app.enableCors();
+  const frontendUrls = process.env.FRONTEND_URL 
+    ? process.env.FRONTEND_URL.split(',') 
+    : ['http://localhost:5173', 'http://localhost:3000'];
+
+  app.enableCors({
+    origin: frontendUrls,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+    allowedHeaders: 'Content-Type, Accept, Authorization',
+  });
 
   // ─── Global API Prefix ────────────────────────────────────────────────────
   app.setGlobalPrefix('api/v1');

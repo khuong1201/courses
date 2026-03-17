@@ -41,5 +41,5 @@ COPY --from=builder /usr/src/app/prisma ./prisma
 ENV PORT=3000
 EXPOSE ${PORT}
 
-# Start the server using the correct path to main.js
-CMD ["node", "dist/src/main"]
+# Start the server: run migrations first, then start the app
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/src/main"]
