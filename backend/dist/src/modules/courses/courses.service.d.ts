@@ -58,11 +58,11 @@ export declare class CoursesService {
                 updated_at: Date;
                 title: string;
                 order: number;
-                module_id: string;
                 content_type: import("@prisma/client").$Enums.LessonType;
                 video_url: string | null;
                 text_content: string | null;
                 duration: number | null;
+                module_id: string;
             }[];
         } & {
             id: string;
