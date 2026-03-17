@@ -21,6 +21,8 @@ async function bootstrap() {
   // ─── Global API Prefix ────────────────────────────────────────────────────
   app.setGlobalPrefix('api/v1');
 
+  const appUrl = process.env.APP_URL || `http://localhost:${process.env.PORT ?? 3000}`;
+
   // ─── Swagger / OpenAPI ────────────────────────────────────────────────────
   const config = new DocumentBuilder()
     .setTitle('LMS Backend API')
@@ -40,7 +42,7 @@ Click **Authorize** and enter: \`Bearer <your_token>\`
       `,
     )
     .setVersion('1.0.0')
-    .addServer('http://localhost:3000', 'Local Development')
+    .addServer(appUrl, process.env.NODE_ENV === 'production' ? 'Production Server' : 'Local Development')
     .addBearerAuth(
       {
         type: 'http',
@@ -68,7 +70,7 @@ Click **Authorize** and enter: \`Bearer <your_token>\`
   });
 
   await app.listen(process.env.PORT ?? 3000);
-  console.log(`\n🚀 Server running on http://localhost:${process.env.PORT ?? 3000}`);
-  console.log(`📖 Swagger docs: http://localhost:${process.env.PORT ?? 3000}/api/docs\n`);
+  console.log(`\n🚀 Server running on ${appUrl}`);
+  console.log(`📖 Swagger docs: ${appUrl}/api/docs\n`);
 }
 bootstrap();
