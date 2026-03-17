@@ -12,11 +12,16 @@ COPY prisma ./prisma/
 # Install all dependencies including devDependencies for the build
 RUN npm install --legacy-peer-deps
 
+# Copy source code and config files early for Prisma generate
+COPY . .
+
+# Set a dummy DATABASE_URL for generate step if needed by prisma.config.ts
+ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
+
 # Generate Prisma Client
 RUN npx prisma generate
 
-# Copy source code and build the application
-COPY . .
+# Build the application
 RUN npm run build
 
 # Production stage
@@ -39,7 +44,7 @@ COPY --from=builder /usr/src/app/prisma ./prisma
 COPY --from=builder /usr/src/app/package*.json ./
 COPY --from=builder /usr/src/app/nest-cli.json ./
 COPY --from=builder /usr/src/app/tsconfig*.json ./
-COPY --from=builder /usr/src/app/prisma.config.ts ./
+COPY --from=builder /usr/src/app/prisma.config.js ./
 
 # Use Render's PORT environment variable or default to 3000
 ENV PORT=3000
