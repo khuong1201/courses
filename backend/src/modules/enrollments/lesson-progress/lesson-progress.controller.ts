@@ -1,7 +1,7 @@
 import { Controller, Post, Param, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { LessonProgressService } from './lesson-progress.service';
-import { Auth } from '../../common/decorators/auth.decorator';
+import { Auth } from '../../../common/decorators/auth.decorator';
 
 @ApiTags('Lesson Progress')
 @Auth()
