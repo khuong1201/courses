@@ -3,6 +3,7 @@ import {
   ApiTags,
   ApiOperation,
   ApiResponse,
+  ApiBody,
   ApiParam,
   ApiBearerAuth,
   ApiForbiddenResponse,
@@ -27,6 +28,7 @@ export class LessonsController {
     description: 'Creates a lesson (VIDEO, TEXT, or QUIZ) inside a module. Only the course owner can add lessons.',
   })
   @ApiParam({ name: 'moduleId', description: 'UUID of the parent module' })
+  @ApiBody({ type: CreateLessonDto })
   @ApiResponse({ status: 201, description: 'Lesson created' })
   @ApiBadRequestResponse({ description: 'Invalid input data' })
   @ApiNotFoundResponse({ description: 'Module not found' })

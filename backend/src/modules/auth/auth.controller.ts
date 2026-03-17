@@ -3,6 +3,7 @@ import {
   ApiTags,
   ApiOperation,
   ApiResponse,
+  ApiBody,
   ApiBadRequestResponse,
   ApiConflictResponse,
   ApiUnauthorizedResponse,
@@ -13,12 +14,13 @@ import { RegisterDto, LoginDto, AuthTokenResponseDto } from './dto/auth.dto';
 @ApiTags('🔐 Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @ApiOperation({
     summary: 'Register a new user',
-    description: 'Creates a new user account with the given email, password, full name, and optional role.',
+    description: 'Creates a new user account. Default role is STUDENT.',
   })
+  @ApiBody({ type: RegisterDto })
   @ApiResponse({ status: 201, description: 'User registered successfully', type: RegisterDto })
   @ApiBadRequestResponse({ description: 'Invalid input data (validation failed)' })
   @ApiConflictResponse({ description: 'Email is already registered' })
@@ -29,9 +31,10 @@ export class AuthController {
 
   @ApiOperation({
     summary: 'Login and get access token',
-    description: 'Authenticates the user and returns a JWT access token valid for 7 days.',
+    description: 'Returns a JWT Bearer token valid for 7 days.',
   })
-  @ApiResponse({ status: 200, description: 'Login successful — returns JWT token', type: AuthTokenResponseDto })
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({ status: 200, description: 'Login successful', type: AuthTokenResponseDto })
   @ApiUnauthorizedResponse({ description: 'Invalid email or password' })
   @ApiBadRequestResponse({ description: 'Missing or invalid fields' })
   @HttpCode(HttpStatus.OK)

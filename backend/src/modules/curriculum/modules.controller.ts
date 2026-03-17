@@ -3,6 +3,7 @@ import {
   ApiTags,
   ApiOperation,
   ApiResponse,
+  ApiBody,
   ApiParam,
   ApiBearerAuth,
   ApiForbiddenResponse,
@@ -28,6 +29,7 @@ export class ModulesController {
     description: 'Adds a new section/module to an existing course. Only the course owner can add modules.',
   })
   @ApiParam({ name: 'courseId', description: 'UUID of the target course' })
+  @ApiBody({ type: CreateModuleDto })
   @ApiResponse({ status: 201, description: 'Module created successfully', type: CourseModuleEntity })
   @ApiBadRequestResponse({ description: 'Invalid input data' })
   @ApiNotFoundResponse({ description: 'Course not found' })
@@ -47,6 +49,7 @@ export class ModulesController {
     description: 'Update the title or order of an existing module. Only the course owner can update.',
   })
   @ApiParam({ name: 'moduleId', description: 'UUID of the module to update' })
+  @ApiBody({ schema: { properties: { title: { type: 'string', example: 'Updated Module Title' } }, required: ['title'] } })
   @ApiResponse({ status: 200, description: 'Module updated', type: CourseModuleEntity })
   @ApiNotFoundResponse({ description: 'Module not found' })
   @ApiForbiddenResponse({ description: 'You do not own this module' })

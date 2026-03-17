@@ -3,6 +3,7 @@ import {
   ApiTags,
   ApiOperation,
   ApiResponse,
+  ApiBody,
   ApiParam,
   ApiBearerAuth,
   ApiNotFoundResponse,
@@ -49,6 +50,7 @@ export class CoursesController {
     description: 'Instructor creates a new course in DRAFT status. Must be published before students can enroll.',
   })
   @ApiBearerAuth()
+  @ApiBody({ type: CreateCourseDto })
   @ApiResponse({ status: 201, description: 'Course created', type: CourseEntity })
   @ApiBadRequestResponse({ description: 'Invalid input data' })
   @ApiUnauthorizedResponse({ description: 'Not authenticated' })
@@ -76,6 +78,7 @@ export class CoursesController {
   })
   @ApiBearerAuth()
   @ApiParam({ name: 'id', description: 'Course UUID' })
+  @ApiBody({ type: UpdateCourseDto })
   @ApiResponse({ status: 200, description: 'Course updated', type: CourseEntity })
   @ApiNotFoundResponse({ description: 'Course not found' })
   @ApiForbiddenResponse({ description: 'Can only update your own courses' })
